@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gift Recommendation Flowchart</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .question {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .question h2 {
+            margin-top: 0;
+            color: #3498db;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .option {
+            padding: 12px;
+            background-color: #f0f8ff;
+            border: 1px solid #3498db;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .option:hover {
+            background-color: #e1f0ff;
+        }
+        .recommendations {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .recommendations h2 {
+            margin-top: 0;
+            color: #27ae60;
+        }
+        .recommendations ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .recommendations li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .hidden {
+            display: none;
+        }
+        .button-container {
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Find the Perfect Gift</h1>
+    
+    <div class="question" id="q1">
+        <h2>1. Who is the gift for?</h2>
+        <div class="options">
+            <div class="option" onclick="selectOption('q1', 'Partner', 'q2')">Partner</div>
+            <div class="option" onclick="selectOption('q1', 'Friend', 'q2')">Friend</div>
+            <div class="option" onclick="selectOption('q1', 'Family', 'q2')">Family</div>
+            <div class="option" onclick="selectOption('q1', 'Colleague', 'q2')">Colleague</div>
+        </div>
+    </div>
+
+    <div class="question hidden" id="q2">
+        <h2>2. What’s their age group?</h2>
+        <div class="options" id="age-options">
+            <!-- Age options will be dynamically populated here -->
+        </div>
+        <div class="button-container">
+            <button onclick="goBack('q2', 'q1')">Back</button>
+        </div>
+    </div>
+
+    <div class="question hidden" id="q3">
+        <h2>3. What are their interests?</h2>
+        <div class="options">
+            <div class="option" onclick="selectOption('q3', 'Tech', 'recommendations')">Tech</div>
+            <div class="option" onclick="selectOption('q3', 'Fashion', 'recommendations')">Fashion</div>
+            <div class="option" onclick="selectOption('q3', 'Books', 'recommendations')">Books</div>
+            <div class="option" onclick="selectOption('q3', 'Outdoors', 'recommendations')">Outdoors</div>
+            <div class="option" onclick="selectOption('q3', 'Food & Cooking', 'recommendations')">Food & Cooking</div>
+            <div class="option" onclick="selectOption('q3', 'Fitness', 'recommendations')">Fitness</div>
+            <div class="option" onclick="selectOption('q3', 'Arts & Crafts', 'recommendations')">Arts & Crafts</div>
+            <div class="option" onclick="selectOption('q3', 'Travel', 'recommendations')">Travel</div>
+            <div class="option" onclick="selectOption('q3', 'Self-Care & Hygiene', 'recommendations')">Self-Care & Hygiene</div>
+        </div>
+        <div class="button-container">
+            <button onclick="goBack('q3', 'q2')">Back</button>
+        </div>
+    </div>
+
+    <div class="recommendations hidden" id="recommendations">
+        <h2>Recommended Gifts</h2>
+        <p id="selected-options"></p>
+        <ul id="gift-list"></ul>
+        <div class="button-container">
+            <button onclick="resetFlowchart()">Start Over</button>
+            <button onclick="goBackToLastQuestion()">Back</button>
+        </div>
+    </div>
+
+    <script>
+        const selections = {};
+        let lastQuestionId = 'q1';
+
+        function selectOption(questionId, option, nextQuestionId) {
+            selections[questionId] = option;
+            lastQuestionId = questionId;
+            document.getElementById(questionId).classList.add('hidden');
+            document.getElementById(nextQuestionId).classList.remove('hidden');
+
+            if (nextQuestionId === 'q2') {
+                updateAgeOptions();
+            }
+
+            if (nextQuestionId === 'recommendations') {
+                generateRecommendations();
+            }
+        }
+
+        function updateAgeOptions() {
+            const recipient = selections['q1'];
+            const ageOptions = document.getElementById('age-options');
+            
+            const allAges = {
+                'Partner': ['Teen (13–19)', 'Adult (20–64)', 'Senior (65+)'],
+                'Friend': ['Child (0–12)', 'Teen (13–19)', 'Adult (20–64)', 'Senior (65+)'],
+                'Family': ['Child (0–12)', 'Teen (13–19)', 'Adult (20–64)', 'Senior (65+)'],
+                'Colleague': ['Teen (13–19)', 'Adult (20–64)', 'Senior (65+)']
+            };
+
+            const ages = allAges[recipient] || [];
+            ageOptions.innerHTML = ages.map(age => 
+                `<div class="option" onclick="selectOption('q2', '${age}', 'q3')">${age}</div>`
+            ).join('');
+        }
+
+        function generateRecommendations() {
+            const recipient = selections['q1'];
+            const ageGroup = selections['q2'];
+            const interest = selections['q3'];
+
+            document.getElementById('selected-options').textContent = 
+                `For ${recipient}, ${ageGroup}, interested in ${interest}:`;
+
+            const gifts = getGiftRecommendations(recipient, ageGroup, interest);
+            const giftList = document.getElementById('gift-list');
+            giftList.innerHTML = gifts.map(gift => `<li>${gift}</li>`).join('');
+            document.getElementById('recommendations').classList.remove('hidden');
+        }
+
+        function getGiftRecommendations(recipient, ageGroup, interest) {
+            const recommendations = {
+                'Partner': {
+                    'Teen (13–19)': {
+                        'Tech': ['Gaming headset', 'Console accessories', 'In-game currency', 'Portable speaker', 'Wireless earbuds', 'Smartphone accessories', 'VR headset', 'Custom phone case', 'Bluetooth keyboard', 'Gaming mouse', 'Smartwatch', 'Wireless charger', 'Streaming microphone', 'Gaming chair', 'Custom PC parts'],
+                        'Fashion': ['Trendy backpack', 'Custom jewelry', 'Streetwear', 'Designer sunglasses', 'Trendy watch', 'Personalized hoodie', 'Custom sneakers', 'Luxury scarf', 'Fashion subscription box', 'Designer wallet', 'Personalized mug', 'Custom T-shirt', 'Trendy outfit', 'Vintage jacket', 'Leather bracelet'],
+                        'Books': ['Young adult book series', 'Personalized journal', 'Book-themed merch', 'Graphic novel set', 'Bookstore gift card', 'Fantasy series', 'Sci-fi novels', 'Historical fiction', 'First edition books', 'Signed copies', 'Bestseller novel', 'Book club subscription', 'Personalized book', 'Audiobook subscription', 'Reading lamp', 'Poetry collection', 'Mystery novels', 'Romance novels'],
+                        'Outdoors': ['Camping gear for teens', 'Hiking backpack', 'Outdoor sports set', 'Portable hammock', 'Outdoor game set', 'Kids’ binoculars', 'Gardening set for kids', 'Kids’ tent', 'Outdoor exploration kit', 'Survival kit', 'Binoculars', 'Gardening tools', 'Outdoor blanket', 'Picnic set', 'Frisbee', 'Sports ball set'],
+                        'Food & Cooking': ['Teen cooking class voucher', 'Personalized recipe book', 'Gourmet snack box', 'DIY food kit', 'Kitchen gadget set', 'Air fryer', 'Spice subscription', 'Specialty coffee/tea', 'Cookbook by favorite chef', 'Baking set', 'Personalized apron', 'Gourmet food basket', 'Pizza stone', 'Fondue set', 'Smoothie maker'],
+                        'Fitness': ['Fitness tracker', 'Yoga mat', 'Resistance bands set', 'Jump rope', 'Home workout equipment', 'Smart water bottle', 'Dumbbell set', 'Massage gun', 'Wellness retreat voucher', 'Foam roller', 'Personalized workout plan', 'Dance class voucher', 'Pilates set'],
+                        'Arts & Crafts': ['DIY craft kit', 'Personalized sketchbook', 'Art supplies set', 'Painting set', 'Knitting kit', 'DIY slime kit', 'Origami set', 'DIY jewelry kit', 'Craft supplies box', 'Scrapbooking supplies', 'Calligraphy set', 'Pottery kit', 'Embroidery kit', 'Candle-making kit'],
+                        'Travel': ['Travel journal', 'Personalized luggage tag', 'Travel-themed decor', 'Travel-themed toy', 'Kids’ suitcase', 'Travel-themed puzzle', 'World map poster', 'Travel voucher', 'Personalized passport cover', 'Travel accessories set', 'Portable charger', 'Language phrasebook', 'Travel pillow'],
+                        'Self-Care & Hygiene': ['Skincare set', 'Perfume/cologne set', 'Bath bomb set', 'Spa gift set', 'Luxury bathrobe', 'Haircare set', 'Manicure/pedicure set', 'Aromatherapy diffuser', 'Essential oil set', 'Self-care book', 'Facial mask set', 'Body scrub set', 'Scented candle set']
+                    },
+                    'Adult (20–64)': {
+                        'Tech': ['Smartwatch', 'Wireless earbuds', 'Custom engraved tech accessory', 'VR headset', 'Smart home hub', 'Smart home device', 'Wireless charger', 'Noise-canceling headphones', 'Portable SSD', 'Gaming console', 'Portable speaker', 'Smart thermostat', 'Smart lighting', 'Drone', '3D printer', 'E-reader'],
+                        'Fashion': ['Designer perfume/cologne', 'Luxury scarf', 'Custom jewelry', 'Trendy handbag', 'Personalized wallet', 'Designer clothing', 'Personalized accessories', 'Trendy outfit', 'Custom jewelry', 'Luxury watch', 'Personalized mug', 'Custom T-shirt', 'Cashmere sweater', 'Leather goods', 'Fashion subscription box', 'Personal stylist session', 'Vintage clothing', 'Designer sunglasses'],
+                        'Books': ['Bestseller novel', 'Book club subscription', 'Personalized book', 'First edition of a favorite book', 'Bookstore gift card', 'Rare book', 'Signed copy by favorite author', 'Literary-themed art', 'Book-themed merch', 'E-reader', 'Audiobook subscription', 'Reading lamp', 'Poetry collection', 'Mystery novels', 'Romance novels', 'Classic literature set', 'Personalized book embosser'],
+                        'Outdoors': ['Camping gear set', 'Hiking backpack', 'Portable grill', 'Outdoor hammock', 'Binoculars', 'Outdoor adventure voucher', 'Portable speaker', 'High-quality tent', 'Luxury camping gear', 'Personalized compass', 'Gardening tools', 'Outdoor blanket', 'Picnic set', 'Frisbee', 'Outdoor game set', 'Survival kit', 'Portable fire pit'],
+                        'Food & Cooking': ['Kitchen gadget set', 'Personalized apron', 'Gourmet food basket', 'Air fryer', 'Cheese board set', 'Cooking class for two', 'Personalized recipe book', 'Custom cutting board', 'Wine subscription', 'Gourmet dinner set', 'Specialty coffee/tea', 'Cookbook by favorite chef', 'Baking set', 'Pizza stone', 'Fondue set', 'Smoothie maker', 'Coffee machine'],
+                        'Fitness': ['Fitness tracker', 'Yoga mat', 'Resistance bands set', 'Dumbbell set', 'Smart water bottle', 'Couples’ gym membership', 'Massage gun', 'Wellness retreat voucher', 'Personalized yoga mat', 'Fitness tracker for two', 'Home gym equipment', 'Dance class voucher', 'Pilates set', 'Meditation cushion'],
+                        'Arts & Crafts': ['DIY craft kit', 'Personalized sketchbook', 'Art supplies set', 'Painting set', 'Calligraphy kit', 'Custom portrait session', 'DIY art kit for two', 'Personalized art piece', 'Art class voucher', 'Custom puzzle', 'Scrapbooking supplies', 'Pottery kit', 'Embroidery kit', 'Candle-making kit', 'Woodworking kit'],
+                        'Travel': ['Travel voucher', 'Personalized passport cover', 'Travel accessories set', 'Luggage set', 'Travel journal', 'Romantic getaway voucher', 'Custom travel map', 'Weekend escape package', 'Couples’ adventure book', 'Luxury suitcase set', 'Portable charger', 'Language phrasebook', 'Travel pillow', 'Universal adapter', 'Noise-canceling headphones'],
+                        'Self-Care & Hygiene': ['Skincare set', 'Perfume/cologne set', 'Spa day voucher', 'Luxury bathrobe', 'Bath bomb set', 'Aromatherapy diffuser', 'Essential oil set', 'Manicure/pedicure set', 'Haircare set', 'Self-care subscription box', 'Facial mask set', 'Body scrub set', 'Scented candle set', 'Massage oil set', 'Relaxation music playlist']
+                    },
+                    'Senior (65+)': {
+                        'Tech': ['Easy-to-use tablet', 'Smartphone with large buttons', 'E-reader', 'Wireless headphones', 'Digital photo frame', 'Tech support subscription', 'Simple gadgets', 'Virtual assistant device', 'Smart speaker', 'Portable charger', 'Smartwatch', 'Wireless earbuds', 'Large-button remote', 'Medical alert system'],
+                        'Fashion': ['Comfortable clothing set', 'Personalized scarf', 'Classic watch', 'Cozy sweater', 'Leather gloves', 'Custom jewelry', 'Vintage accessories', 'Handmade clothing', 'Luxury robe', 'Designer sunglasses', 'Personalized mug', 'Custom T-shirt', 'Orthopedic shoes', 'Lightweight jacket'],
+                        'Books': ['Large-print book set', 'Classic literature', 'Audiobook subscription', 'Book collection', 'Personalized bookmark', 'Book club membership', 'Niche genre books', 'Literary-themed art', 'Book-themed candle', 'Reading lamp', 'Bestseller novel', 'Book club subscription', 'Personalized book', 'Mystery novels', 'Historical books', 'Biographies'],
+                        'Outdoors': ['Gardening set', 'Birdwatching gear', 'Compost bin', 'Outdoor blanket', 'Portable chair', 'Gardening tools', 'Outdoor game set', 'Picnic set', 'Nature guidebook', 'Bird feeder', 'Binoculars', 'Portable grill', 'Sun hat', 'Walking stick'],
+                        'Food & Cooking': ['Easy recipe cookbook', 'Personalized apron', 'Gourmet tea/coffee set', 'Baking set', 'Specialty spices', 'Food subscription box', 'Cooking class voucher', 'Gourmet chocolate', 'Custom cutting board', 'Spice subscription', 'Specialty coffee/tea', 'Cookbook by favorite chef', 'Slow cooker', 'Tea sampler'],
+                        'Fitness': ['Light resistance bands', 'Comfortable yoga mat', 'Walking shoes', 'Fitness tracker', 'Massage cushion', 'Yoga class pass', 'Personalized workout plan', 'Recovery gear', 'Fitness app subscription', 'Meditation cushion', 'Smart water bottle', 'Pedometer', 'Stretching band set'],
+                        'Arts & Crafts': ['Painting set', 'Knitting kit', 'Scrapbooking supplies', 'DIY craft kit', 'Calligraphy set', 'Origami set', 'Sticker book', 'DIY candle-making kit', 'Custom puzzle', 'Scrapbooking supplies', 'Personalized sketchbook', 'Art supplies set', 'Embroidery kit', 'Quilting kit'],
+                        'Travel': ['Comfortable travel pillow', 'Luggage set', 'Travel journal', 'Portable charger', 'Travel-themed decor', 'Travel experience voucher', 'Custom city guide', 'Travel-themed puzzle', 'Language phrasebook', 'Travel accessories set', 'Neck pillow', 'Eye mask', 'Travel blanket'],
+                        'Self-Care & Hygiene': ['Skincare set', 'Perfume/cologne set', 'Bath bomb set', 'Spa gift set', 'Luxury soap set', 'Haircare set', 'Manicure/pedicure set', 'Aromatherapy diffuser', 'Essential oil set', 'Self-care book', 'Facial mask set', 'Body scrub set', 'Scented candle set', 'Massage oil set', 'Relaxation music playlist']
+                    }
+                },
+                'Friend': {
+                    'Child (0–12)': {
+                        'Tech': ['Educational tablet', 'Kids’ smartwatch', 'Interactive robot toy', 'Remote control car', 'Kids’ camera', 'STEM toy set', 'Coding robot', 'Kids’ headphones', 'Puzzle with tech theme', 'DIY robot kit', 'Smartwatch', 'Wireless earbuds', 'Kids’ coding game', 'Interactive globe', 'Kids’ laptop'],
+                        'Fashion': ['Kids’ trendy outfit', 'Personalized backpack', 'Fun socks set', 'Custom T-shirt', 'Kids’ sneakers', 'Costume set', 'Personalized hat', 'Jewelry for kids', 'Winter accessories set', 'Shoes', 'Personalized mug', 'Kids’ hoodie', 'Rain boots', 'Glow-in-the-dark accessories'],
+                        'Books': ['Children’s book set', 'Personalized storybook', 'Interactive book', 'Comic book set', 'DIY bookmark kit', 'Adventure book series', 'Educational book set', 'Audiobook for kids', 'Book-themed toy', 'DIY bookmark kit', 'Bestseller novel', 'Book club subscription', 'Personalized book', 'Picture books', 'Puzzle books', 'Activity books'],
+                        'Outdoors': ['Outdoor exploration kit', 'Kids’ binoculars', 'Gardening set for kids', 'Kids’ tent', 'Outdoor sports set', 'Sled', 'Outdoor game set', 'Camping kit for kids', 'Nature scavenger hunt kit', 'Bug catching kit', 'Portable hammock', 'Gardening tools', 'Outdoor blanket', 'Picnic set', 'Frisbee', 'Kite', 'Sidewalk chalk set'],
+                        'Food & Cooking': ['Kids’ baking set', 'Personalized apron', 'Cookie decorating kit', 'DIY pizza kit', 'Kids’ cookbook', 'Snack box', 'Custom lunchbox', 'Fun food-shaped items', 'Mini kitchen set', 'Gourmet snack box', 'Specialty coffee/tea', 'Cookbook by favorite chef', 'Baking set', 'Pizza stone', 'Cookie cutters set'],
+                        'Fitness': ['Kids’ yoga mat', 'Jump rope', 'Mini trampoline', 'Hula hoop', 'Balance bike', 'Sports ball set', 'Dance class voucher', 'Fitness game', 'Obstacle course kit', 'Hula hoop', 'Fitness tracker', 'Yoga mat', 'Resistance bands set', 'Smart water bottle', 'Pedometer'],
+                        'Arts & Crafts': ['Kids’ painting set', 'DIY jewelry kit', 'Craft supplies box', 'DIY slime kit', 'Origami set', 'Holiday craft kit', 'Personalized coloring book', 'Art easel', 'Sticker book', 'DIY candle-making kit', 'DIY craft kit', 'Personalized sketchbook', 'Art supplies set', 'Painting set', 'Beading kit'],
+                        'Travel': ['Kids’ travel journal', 'Personalized luggage tag', 'Travel-themed toy', 'Kids’ suitcase', 'World map poster', 'Travel game set', 'Travel-themed puzzle', 'DIY passport', 'Cultural craft kit', 'Travel-themed decor', 'Travel journal', 'Luggage set', 'Portable charger', 'Travel pillow'],
+                        'Self-Care & Hygiene': ['Kids’ skincare set', 'Fun bath bomb set', 'Kids’ perfume/cologne set', 'Kids’ hygiene kit', 'Kids’ spa gift set', 'Kids’ haircare set', 'Kids’ bathrobe', 'Kids’ toothbrush set', 'Kids’ nail care kit']
+                    },
+                    'Teen (13–19)': {
+                        'Tech': ['Gaming headset', 'Console accessories', 'In-game currency', 'Portable speaker', 'Wireless earbuds', 'Smartphone accessories', 'VR headset', 'Laptop stand', 'Coding books', 'Robotics kit', 'Smartwatch', 'Wireless charger', 'Streaming microphone', 'Gaming chair', 'Custom PC parts', 'Bluetooth keyboard'],
+                        'Fashion': ['Trendy backpack', 'Custom jewelry', 'Streetwear', 'Designer sunglasses', 'Trendy watch', 'Personalized hoodie', 'Custom sneakers', 'Fashion accessories', 'DIY fashion kit', 'Vintage clothing', 'Personalized mug', 'Custom T-shirt', 'Trendy outfit', 'Vintage jacket', 'Leather bracelet', 'Graphic tee'],
+                        'Books': ['Young adult book series', 'Personalized journal', 'Book-themed merch', 'Graphic novel set', 'Bookstore gift card', 'Bestseller novel', 'Book club subscription', 'Reading lamp', 'Audiobook subscription', 'Literary-themed poster', 'Personalized book', 'Poetry collection', 'Mystery novels', 'Romance novels', 'Fantasy series', 'Sci-fi novels'],
+                        'Outdoors': ['Camping gear for teens', 'Hiking backpack', 'Outdoor sports set', 'Portable hammock', 'Outdoor game set', 'Portable grill', 'Binoculars', 'Gardening kit', 'Birdwatching set', 'Outdoor photography kit', 'Gardening tools', 'Outdoor blanket', 'Picnic set', 'Frisbee', 'Sports ball set', 'Survival kit'],
+                        'Food & Cooking': ['Teen cooking class voucher', 'Personalized recipe book', 'Gourmet snack box', 'DIY food kit', 'Kitchen gadget set', 'Baking set', 'Specialty coffee/tea', 'Food subscription box', 'Custom lunchbox', 'Fun kitchen tools', 'Personalized apron', 'Gourmet food basket', 'Pizza stone', 'Fondue set', 'Smoothie maker'],
+                        'Fitness': ['Fitness tracker', 'Yoga mat', 'Resistance bands set', 'Jump rope', 'Home workout equipment', 'Smart water bottle', 'Dance class voucher', 'Personalized workout plan', 'Recovery gear', 'Fitness app subscription', 'Massage gun', 'Pilates set', 'Meditation cushion'],
+                        'Arts & Crafts': ['DIY craft kit', 'Personalized sketchbook', 'Art supplies set', 'Painting set', 'Knitting kit', 'DIY candle-making kit', 'Custom puzzle', 'Scrapbooking supplies', 'Calligraphy set', 'Origami set', 'Painting set', 'Pottery kit', 'Embroidery kit', 'Jewelry-making kit'],
+                        'Travel': ['Travel journal', 'Personalized luggage tag', 'Travel-themed decor', 'Travel-themed puzzle', 'Travel experience voucher', 'Custom city guide', 'Luggage set', 'Travel accessories set', 'Portable charger', 'Language phrasebook', 'Travel voucher', 'Personalized passport cover', 'Travel pillow', 'Universal adapter'],
+                        'Self-Care & Hygiene': ['Skincare set', 'Perfume/cologne set', 'Bath bomb set', 'Spa gift set', 'Luxury soap set', 'Haircare set', 'Manicure/pedicure set', 'Aromatherapy diffuser', 'Essential oil set', 'Self-care book', 'Facial mask set', 'Body scrub set', 'Scented candle set']
+                    },
+                    'Adult (20–64)': {
+                        'Tech': ['Smart home device', 'Wireless charger', 'Noise-canceling headphones', 'Smartwatch', 'Portable SSD', 'Gaming console', 'E-reader', 'VR headset', 'Tech subscription box', 'DIY tech kit', 'Portable speaker', 'Smart thermostat', 'Smart lighting', 'Drone', '3D printer', 'Tablet', 'Laptop accessories'],
+                        'Fashion': ['Designer clothing', 'Personalized accessories', 'Trendy outfit', 'Custom jewelry', 'Luxury watch', 'Cashmere sweater', 'Leather goods', 'Fashion subscription box', 'Personal stylist session', 'Vintage clothing', 'Personalized mug', 'Custom T-shirt', 'Designer handbag', 'Silk scarf', 'Leather belt', 'Cufflinks'],
+                        'Books': ['Bestseller novel', 'Book club subscription', 'Reading lamp', 'Audiobook subscription', 'Personalized book', 'Book-themed merch', 'DIY bookmark kit', 'Literary-themed art', 'Classic literature set', 'Personalized book embosser', 'Personalized book', 'Poetry collection', 'Mystery novels', 'Romance novels', 'Cookbook', 'Travel guide', 'Language book'],
+                        'Outdoors': ['Camping gear set', 'Hiking backpack', 'Outdoor adventure voucher', 'Portable grill', 'Binoculars', 'Outdoor game set', 'Gardening tools', 'Birdwatching kit', 'Outdoor photography kit', 'Nature scavenger hunt kit', 'Gardening set', 'Outdoor blanket', 'Picnic set', 'Frisbee', 'Portable hammock', 'Survival kit', 'Camping stove'],
+                        'Food & Cooking': ['Kitchen gadget set', 'Personalized apron', 'Gourmet food basket', 'Cookbook by favorite chef', 'Specialty coffee/tea', 'DIY food kit', 'Food subscription box', 'Custom lunchbox', 'Fun kitchen tools', 'Baking set', 'Pizza stone', 'Fondue set', 'Smoothie maker', 'Coffee machine', 'Air fryer', 'Blender'],
+                        'Fitness': ['Fitness tracker', 'Yoga mat', 'Resistance bands set', 'Home gym equipment', 'Smart water bottle', 'Gym membership', 'Personal training session', 'Fitness app subscription', 'Massage gun', 'Wellness retreat voucher', 'Personalized workout plan', 'Dance class voucher', 'Pilates set', 'Meditation cushion'],
+                        'Arts & Crafts': ['DIY craft kit', 'Personalized sketchbook', 'Art supplies set', 'Painting set', 'Calligraphy set', 'DIY candle-making kit', 'Custom puzzle', 'Scrapbooking supplies', 'Art class voucher', 'Custom portfolio', 'Painting set', 'Pottery kit', 'Embroidery kit', 'Woodworking kit', 'Sewing machine'],
+                        'Travel': ['Travel voucher', 'Personalized passport cover', 'Travel accessories set', 'Luggage set', 'Travel journal', 'Travel experience voucher', 'Custom city guide', 'Travel-themed puzzle', 'Language phrasebook', 'Travel-themed decor', 'Portable charger', 'Travel pillow', 'Universal adapter', 'Noise-canceling headphones'],
+                        'Self-Care & Hygiene': ['Spa gift set', 'Luxury bathrobe', 'Skincare set', 'Perfume/cologne set', 'Bath bomb set', 'Aromatherapy diffuser', 'Essential oil set', 'Manicure/pedicure set', 'Haircare set', 'Self-care subscription box', 'Facial mask set', 'Body scrub set', 'Scented candle set', 'Massage oil set']
+                    },
+                    'Senior (65+)': {
+                        'Tech': ['Easy-to-use tablet', 'Smartphone with large buttons', 'E-reader', 'Wireless headphones', 'Digital photo frame', 'Tech support subscription', 'Simple gadgets', 'Virtual assistant device', 'Smart speaker', 'Portable charger', 'Smartwatch', 'Wireless earbuds', 'Large-button remote', 'Medical alert system', 'Automatic pill dispenser'],
+                        'Fashion': ['Comfortable clothing set', 'Personalized scarf', 'Classic watch', 'Cozy sweater', 'Leather gloves', 'Custom jewelry', 'Vintage accessories', 'Handmade clothing', 'Luxury robe', 'Designer sunglasses', 'Personalized mug', 'Custom T-shirt', 'Orthopedic shoes', 'Lightweight jacket', 'Slippers'],
+                        'Books': ['Large-print book set', 'Classic literature', 'Audiobook subscription', 'Book collection', 'Personalized bookmark', 'Book club membership', 'Niche genre books', 'Literary-themed art', 'Book-themed candle', 'Reading lamp', 'Bestseller novel', 'Book club subscription', 'Personalized book', 'Mystery novels', 'Historical books', 'Biographies', 'Crossword puzzle books'],
+                        'Outdoors': ['Gardening set', 'Birdwatching gear', 'Compost bin', 'Outdoor blanket', 'Portable chair', 'Gardening tools', 'Outdoor game set', 'Picnic set', 'Nature guidebook', 'Bird feeder', 'Binoculars', 'Portable grill', 'Sun hat', 'Walking stick', 'Gardening kneeler'],
+                        'Food & Cooking': ['Easy recipe cookbook', 'Personalized apron', 'Gourmet tea/coffee set', 'Baking set', 'Specialty spices', 'Food subscription box', 'Cooking class voucher', 'Gourmet chocolate', 'Custom cutting board', 'Spice subscription', 'Specialty coffee/tea', 'Cookbook by favorite chef', 'Slow cooker', 'Tea sampler', 'Herb garden kit'],
+                        'Fitness': ['Light resistance bands', 'Comfortable yoga mat', 'Walking shoes', 'Fitness tracker', 'Massage cushion', 'Yoga class pass', 'Personalized workout plan', 'Recovery gear', 'Fitness app subscription', 'Meditation cushion', 'Smart water bottle', 'Pedometer', 'Stretching band set', 'Balance ball'],
+                        'Arts & Crafts': ['Painting set', 'Knitting kit', 'Scrapbooking supplies', 'DIY craft kit', 'Calligraphy set', 'Origami set', 'Sticker book', 'DIY candle-making kit', 'Custom puzzle', 'Scrapbooking supplies', 'Personalized sketchbook', 'Art supplies set', 'Embroidery kit', 'Quilting kit', 'Model kit'],
+                        'Travel': ['Comfortable travel pillow', 'Luggage set', 'Travel journal', 'Portable charger', 'Travel-themed decor', 'Travel experience voucher', 'Custom city guide', 'Travel-themed puzzle', 'Language phrasebook', 'Travel accessories set', 'Neck pillow', 'Eye mask', 'Travel blanket', 'Luggage scale'],
+                        'Self-Care & Hygiene': ['Skincare set', 'Perfume/cologne set', 'Bath bomb set', 'Spa gift set', 'Luxury soap set', 'Haircare set', 'Manicure/pedicure set', 'Aromatherapy diffuser', 'Essential oil set', 'Self-care book', 'Facial mask set', 'Body scrub set', 'Scented candle set', 'Massage oil set']
+                    }
+                },
+                'Family': {
+                    'Child (0–12)': {
+                        'Tech': ['Educational tablet', 'Kids’ smartwatch', 'Interactive robot toy', 'Remote control car', 'Kids’ camera', 'STEM toy set', 'Coding robot', 'Kids’ headphones', 'Puzzle with tech theme', 'DIY robot kit', 'Smartwatch', 'Wireless earbuds', 'Kids’ coding game', 'Interactive globe', 'Kids’ laptop'],
+                        'Fashion': ['Kids’ trendy outfit', 'Personalized backpack', 'Fun socks set', 'Custom T-shirt', 'Kids’ sneakers', 'Costume set', 'Personalized hat', 'Jewelry for kids', 'Winter accessories set', 'Shoes', 'Personalized mug', 'Kids’ hoodie', 'Rain boots', 'Glow-in-the-dark accessories'],
+                        'Books': ['Children’s book set', 'Personalized storybook', 'Interactive book', 'Comic book set', 'DIY bookmark kit', 'Adventure book series', 'Educational book set', 'Audiobook for kids', 'Book-themed toy', 'DIY bookmark kit', 'Bestseller novel', 'Book club subscription', 'Personalized book', 'Picture books', 'Puzzle books', 'Activity books'],
+                        'Outdoors': ['Outdoor exploration kit', 'Kids’ binoculars', 'Gardening set for kids', 'Kids’ tent', 'Outdoor sports set', 'Sled', 'Outdoor game set', 'Camping kit for kids', 'Nature scavenger hunt kit', 'Bug catching kit', 'Portable hammock', 'Gardening tools', 'Outdoor blanket', 'Picnic set', 'Frisbee', 'Kite', 'Sidewalk chalk set'],
+                        'Food & Cooking': ['Kids’ baking set', 'Personalized apron', 'Cookie decorating kit', 'DIY pizza kit', 'Kids’ cookbook', 'Snack box', 'Custom lunchbox', 'Fun food-shaped items', 'Mini kitchen set', 'Gourmet snack box', 'Specialty coffee/tea', 'Cookbook by favorite chef', 'Baking set', 'Pizza stone', 'Cookie cutters set'],
+                        'Fitness': ['Kids’ yoga mat', 'Jump rope', 'Mini trampoline', 'Hula hoop', 'Balance bike', 'Sports ball set', 'Dance class voucher', 'Fitness game', 'Obstacle course kit', 'Hula hoop', 'Fitness tracker', 'Yoga mat', 'Resistance bands set', 'Smart water bottle', 'Pedometer'],
+                        'Arts & Crafts': ['Kids’ painting set', 'DIY jewelry kit', 'Craft supplies box', 'DIY slime kit', 'Origami set', 'Holiday craft kit', 'Personalized coloring book', 'Art easel', 'Sticker book', 'DIY candle-making kit', 'DIY craft kit', 'Personalized sketchbook', 'Art supplies set', 'Painting set', 'Beading kit'],
+                        'Travel': ['Kids’ travel journal', 'Personalized luggage tag', 'Travel-themed toy', 'Kids’ suitcase', 'World map poster', 'Travel game set', 'Travel-themed puzzle', 'DIY passport', 'Cultural craft kit', 'Travel-themed decor', 'Travel journal', 'Luggage set', 'Portable charger', 'Travel pillow'],
+                        'Self-Care & Hygiene': ['Kids’ skincare set', 'Fun bath bomb set', 'Kids’ perfume/cologne set', 'Kids’ hygiene kit', 'Kids’ spa gift set', 'Kids’ haircare set', 'Kids’ bathrobe', 'Kids’ toothbrush set', 'Kids’ nail care kit']
+                    },
+                    'Teen (13–19)': {
+                        'Tech': ['Gaming headset', 'Console accessories', 'In-game currency', 'Portable speaker', 'Wireless earbuds', 'Smartphone accessories', 'VR headset', 'Laptop stand', 'Coding books', 'Robotics kit', 'Smartwatch', 'Wireless charger', 'Streaming microphone', 'Gaming chair', 'Custom PC parts', 'Bluetooth keyboard'],
+                        'Fashion': ['Trendy backpack', 'Custom jewelry', 'Streetwear', 'Designer sunglasses', 'Trendy watch', 'Personalized hoodie', 'Custom sneakers', 'Fashion accessories', 'DIY fashion kit', 'Vintage clothing', 'Personalized mug', 'Custom T-shirt', 'Trendy outfit', 'Vintage jacket', 'Leather bracelet', 'Graphic tee'],
+                        'Books': ['Young adult book series', 'Personalized journal', 'Book-themed merch', 'Graphic novel set', 'Bookstore gift card', 'Bestseller novel', 'Book club subscription', 'Reading lamp', 'Audiobook subscription', 'Literary-themed poster', 'Personalized book', 'Poetry collection', 'Mystery novels', 'Romance novels', 'Fantasy series', 'Sci-fi novels'],
+                        'Outdoors': ['Camping gear for teens', 'Hiking backpack', 'Outdoor sports set', 'Portable hammock', 'Outdoor game set', 'Portable grill', 'Binoculars', 'Gardening kit', 'Birdwatching set', 'Outdoor photography kit', 'Gardening tools', 'Outdoor blanket', 'Picnic set', 'Frisbee', 'Sports ball set', 'Survival kit'],
+                        'Food & Cooking': ['Teen cooking class voucher', 'Personalized recipe book', 'Gourmet snack box', 'DIY food kit', 'Kitchen gadget set', 'Baking set', 'Specialty coffee/tea', 'Food subscription box', 'Custom lunchbox', 'Fun kitchen tools', 'Personalized apron', 'Gourmet food basket', 'Pizza stone', 'Fondue set', 'Smoothie maker'],
+                        'Fitness': ['Fitness tracker', 'Yoga mat', 'Resistance bands set', 'Jump rope', 'Home workout equipment', 'Smart water bottle', 'Dance class voucher', 'Personalized workout plan', 'Recovery gear', 'Fitness app subscription', 'Massage gun', 'Pilates set', 'Meditation cushion'],
+                        'Arts & Crafts': ['DIY craft kit', 'Personalized sketchbook', 'Art supplies set', 'Painting set', 'Knitting kit', 'DIY candle-making kit', 'Custom puzzle', 'Scrapbooking supplies', 'Calligraphy set', 'Origami set', 'Painting set', 'Pottery kit', 'Embroidery kit', 'Jewelry-making kit'],
+                        'Travel': ['Travel journal', 'Personalized luggage tag', 'Travel-themed decor', 'Travel-themed puzzle', 'Travel experience voucher', 'Custom city guide', 'Luggage set', 'Travel accessories set', 'Portable charger', 'Language phrasebook', 'Travel voucher', 'Personalized passport cover', 'Travel pillow', 'Universal adapter'],
+                        'Self-Care & Hygiene': ['Skincare set', 'Perfume/cologne set', 'Bath bomb set', 'Spa gift set', 'Luxury soap set', 'Haircare set', 'Manicure/pedicure set', 'Aromatherapy diffuser', 'Essential oil set', 'Self-care book', 'Facial mask set', 'Body scrub set', 'Scented candle set']
+                    },
+                    'Adult (20–64)': {
+                        'Tech': ['Smart home device', 'Wireless charger', 'Noise-canceling headphones', 'Smartwatch', 'Portable SSD', 'Gaming console', 'E-reader', 'VR headset', 'Tech subscription box', 'DIY tech kit', 'Portable speaker', 'Smart thermostat', 'Smart lighting', 'Drone', '3D printer', 'Tablet', 'Laptop accessories'],
+                        'Fashion': ['Designer clothing', 'Personalized accessories', 'Trendy outfit', 'Custom jewelry', 'Luxury watch', 'Cashmere sweater', 'Leather goods', 'Fashion subscription box', 'Personal stylist session', 'Vintage clothing', 'Personalized mug', 'Custom T-shirt', 'Designer handbag', 'Silk scarf', 'Leather belt', 'Cufflinks'],
+                        'Books': ['Bestseller novel', 'Book club subscription', 'Reading lamp', 'Audiobook subscription', 'Personalized book', 'Book-themed merch', 'DIY bookmark kit', 'Literary-themed art', 'Classic literature set', 'Personalized book embosser', 'Personalized book', 'Poetry collection', 'Mystery novels', 'Romance novels', 'Cookbook', 'Travel guide', 'Language book'],
+                        'Outdoors': ['Camping gear set', 'Hiking backpack', 'Outdoor adventure voucher', 'Portable grill', 'Binoculars', 'Outdoor game set', 'Gardening tools', 'Birdwatching kit', 'Outdoor photography kit', 'Nature scavenger hunt kit', 'Gardening set', 'Outdoor blanket', 'Picnic set', 'Frisbee', 'Portable hammock', 'Survival kit', 'Camping stove'],
+                        'Food & Cooking': ['Kitchen gadget set', 'Personalized apron', 'Gourmet food basket', 'Cookbook by favorite chef', 'Specialty coffee/tea', 'DIY food kit', 'Food subscription box', 'Custom lunchbox', 'Fun kitchen tools', 'Baking set', 'Pizza stone', 'Fondue set', 'Smoothie maker', 'Coffee machine', 'Air fryer', 'Blender'],
+                        'Fitness': ['Fitness tracker', 'Yoga mat', 'Resistance bands set', 'Home gym equipment', 'Smart water bottle', 'Gym membership', 'Personal training session', 'Fitness app subscription', 'Massage gun', 'Wellness retreat voucher', 'Personalized workout plan', 'Dance class voucher', 'Pilates set', 'Meditation cushion'],
+                        'Arts & Crafts': ['DIY craft kit', 'Personalized sketchbook', 'Art supplies set', 'Painting set', 'Calligraphy set', 'DIY candle-making kit', 'Custom puzzle', 'Scrapbooking supplies', 'Art class voucher', 'Custom portfolio', 'Painting set', 'Pottery kit', 'Embroidery kit', 'Woodworking kit', 'Sewing machine'],
+                        'Travel': ['Travel voucher', 'Personalized passport cover', 'Travel accessories set', 'Luggage set', 'Travel journal', 'Travel experience voucher', 'Custom city guide', 'Travel-themed puzzle', 'Language phrasebook', 'Travel-themed decor', 'Portable charger', 'Travel pillow', 'Universal adapter', 'Noise-canceling headphones'],
+                        'Self-Care & Hygiene': ['Spa gift set', 'Luxury bathrobe', 'Skincare set', 'Perfume/cologne set', 'Bath bomb set', 'Aromatherapy diffuser', 'Essential oil set', 'Manicure/pedicure set', 'Haircare set', 'Self-care subscription box', 'Facial mask set', 'Body scrub set', 'Scented candle set', 'Massage oil set', 'Relaxation music playlist']
+                    },
+                    'Senior (65+)': {
+                        'Tech': ['Easy-to-use tablet', 'Smartphone with large buttons', 'E-reader', 'Wireless headphones', 'Digital photo frame', 'Tech support subscription', 'Simple gadgets', 'Virtual assistant device', 'Smart speaker', 'Portable charger', 'Smartwatch', 'Wireless earbuds', 'Large-button remote', 'Medical alert system', 'Automatic pill dispenser'],
+                        'Fashion': ['Comfortable clothing set', 'Personalized scarf', 'Classic watch', 'Cozy sweater', 'Leather gloves', 'Custom jewelry', 'Vintage accessories', 'Handmade clothing', 'Luxury robe', 'Designer sunglasses', 'Personalized mug', 'Custom T-shirt', 'Orthopedic shoes', 'Lightweight jacket', 'Slippers'],
+                        'Books': ['Large-print book set', 'Classic literature', 'Audiobook subscription', 'Book collection', 'Personalized bookmark', 'Book club membership', 'Niche genre books', 'Literary-themed art', 'Book-themed candle', 'Reading lamp', 'Bestseller novel', 'Book club subscription', 'Personalized book', 'Mystery novels', 'Historical books', 'Biographies', 'Crossword puzzle books'],
+                        'Outdoors': ['Gardening set', 'Birdwatching gear', 'Compost bin', 'Outdoor blanket', 'Portable chair', 'Gardening tools', 'Outdoor game set', 'Picnic set', 'Nature guidebook', 'Bird feeder', 'Binoculars', 'Portable grill', 'Sun hat', 'Walking stick', 'Gardening kneeler'],
+                        'Food & Cooking': ['Easy recipe cookbook', 'Personalized apron', 'Gourmet tea/coffee set', 'Baking set', 'Specialty spices', 'Food subscription box', 'Cooking class voucher', 'Gourmet chocolate', 'Custom cutting board', 'Spice subscription', 'Specialty coffee/tea', 'Cookbook by favorite chef', 'Slow cooker', 'Tea sampler', 'Herb garden kit'],
+                        'Fitness': ['Light resistance bands', 'Comfortable yoga mat', 'Walking shoes', 'Fitness tracker', 'Massage cushion', 'Yoga class pass', 'Personalized workout plan', 'Recovery gear', 'Fitness app subscription', 'Meditation cushion', 'Smart water bottle', 'Pedometer', 'Stretching band set', 'Balance ball'],
+                        'Arts & Crafts': ['Painting set', 'Knitting kit', 'Scrapbooking supplies', 'DIY craft kit', 'Calligraphy set', 'Origami set', 'Sticker book', 'DIY candle-making kit', 'Custom puzzle', 'Scrapbooking supplies', 'Personalized sketchbook', 'Art supplies set', 'Embroidery kit', 'Quilting kit', 'Model kit'],
+                        'Travel': ['Comfortable travel pillow', 'Luggage set', 'Travel journal', 'Portable charger', 'Travel-themed decor', 'Travel experience voucher', 'Custom city guide', 'Travel-themed puzzle', 'Language phrasebook', 'Travel accessories set', 'Neck pillow', 'Eye mask', 'Travel blanket', 'Luggage scale'],
+                        'Self-Care & Hygiene': ['Skincare set', 'Perfume/cologne set', 'Bath bomb set', 'Spa gift set', 'Luxury soap set', 'Haircare set', 'Manicure/pedicure set', 'Aromatherapy diffuser', 'Essential oil set', 'Self-care book', 'Facial mask set', 'Body scrub set', 'Scented candle set']
+                    }
+                },
+                'Colleague': {
+                    'Teen (13–19)': {
+                        'Tech': ['Gaming headset', 'Console accessories', 'In-game currency', 'Portable speaker', 'Wireless earbuds', 'Smartphone accessories', 'VR headset', 'Laptop stand', 'Coding books', 'Robotics kit', 'Smartwatch', 'Wireless charger', 'Streaming microphone', 'Gaming chair', 'Custom PC parts'],
+                        'Fashion': ['Trendy backpack', 'Custom jewelry', 'Streetwear', 'Designer sunglasses', 'Trendy watch', 'Personalized hoodie', 'Custom sneakers', 'Fashion accessories', 'DIY fashion kit', 'Vintage clothing', 'Personalized mug', 'Custom T-shirt'],
+                        'Books': ['Young adult book series', 'Personalized journal', 'Book-themed merch', 'Graphic novel set', 'Bookstore gift card', 'Bestseller novel', 'Book club subscription', 'Reading lamp', 'Audiobook subscription', 'Literary-themed poster'],
+                        'Outdoors': ['Camping gear for teens', 'Hiking backpack', 'Outdoor sports set', 'Portable hammock', 'Outdoor game set', 'Portable grill', 'Binoculars', 'Gardening kit', 'Birdwatching set', 'Outdoor photography kit'],
+                        'Food & Cooking': ['Teen cooking class voucher', 'Personalized recipe book', 'Gourmet snack box', 'DIY food kit', 'Kitchen gadget set', 'Baking set', 'Specialty coffee/tea', 'Food subscription box', 'Custom lunchbox', 'Fun kitchen tools'],
+                        'Fitness': ['Fitness tracker', 'Yoga mat', 'Resistance bands set', 'Jump rope', 'Home workout equipment', 'Smart water bottle', 'Dance class voucher', 'Personalized workout plan', 'Recovery gear', 'Fitness app subscription'],
+                        'Arts & Crafts': ['DIY craft kit', 'Personalized sketchbook', 'Art supplies set', 'Painting set', 'Knitting kit', 'DIY candle-making kit', 'Custom puzzle', 'Scrapbooking supplies', 'Calligraphy set', 'Origami set'],
+                        'Travel': ['Travel journal', 'Personalized luggage tag', 'Travel-themed decor', 'Travel-themed puzzle', 'Travel experience voucher', 'Custom city guide', 'Luggage set', 'Travel accessories set', 'Portable charger', 'Language phrasebook'],
+                        'Self-Care & Hygiene': ['Skincare set', 'Perfume/cologne set', 'Bath bomb set', 'Spa gift set', 'Luxury soap set', 'Haircare set', 'Manicure/pedicure set', 'Aromatherapy diffuser', 'Essential oil set', 'Self-care book']
+                    },
+                    'Adult (20–64)': {
+                        'Tech': ['USB hub', 'Wireless charger', 'Noise-canceling headphones', 'Smartwatch', 'Portable SSD', 'Smart home device', 'Wireless speaker', 'E-reader', 'Tech subscription box', 'DIY tech kit', 'Portable speaker', 'Ergonomic mouse', 'Desk organizer'],
+                        'Fashion': ['Trendy accessories', 'Personalized mug', 'Custom T-shirt', 'Designer scarf', 'Luxury watch', 'Professional wardrobe set', 'Custom jewelry', 'Leather goods', 'Trendy outfit', 'Personal stylist session', 'Vintage clothing'],
+                        'Books': ['Bestseller novel', 'Book club subscription', 'Reading lamp', 'Audiobook subscription', 'Personalized book', 'Career guide book', 'Inspirational book set', 'Bookstore gift card', 'Productivity planner', 'E-reader'],
+                        'Outdoors': ['Outdoor game set', 'Picnic set', 'Gardening tools', 'Portable hammock', 'Binoculars', 'Camping gear set', 'Hiking backpack', 'Outdoor adventure voucher', 'Portable grill', 'Outdoor blanket', 'Gardening set'],
+                        'Food & Cooking': ['Gourmet snack box', 'Custom lunchbox', 'Fun kitchen tools', 'Cookbook by favorite chef', 'Specialty coffee/tea', 'Gourmet chocolate', 'Specialty tea/coffee', 'Snack box', 'Custom cutting board', 'Spice subscription'],
+                        'Fitness': ['Fitness tracker', 'Yoga mat', 'Resistance bands set', 'Home gym equipment', 'Smart water bottle', 'Gym membership', 'Personal training session', 'Fitness app subscription', 'Massage gun', 'Wellness retreat voucher', 'Personalized workout plan'],
+                        'Arts & Crafts': ['DIY craft kit', 'Personalized sketchbook', 'Art supplies set', 'Painting set', 'Calligraphy set', 'Art class voucher', 'Custom portfolio', 'Crafting workshop pass', 'DIY candle-making kit', 'Scrapbooking supplies'],
+                        'Travel': ['Travel-themed decor', 'Custom travel map', 'Travel journal', 'Luggage set', 'Portable charger', 'Travel voucher', 'Personalized passport cover', 'Travel accessories set', 'Travel experience voucher', 'Custom city guide'],
+                        'Self-Care & Hygiene': ['Spa gift set', 'Luxury bathrobe', 'Skincare set', 'Perfume/cologne set', 'Bath bomb set', 'Aromatherapy diffuser', 'Essential oil set', 'Manicure/pedicure set', 'Haircare set', 'Self-care subscription box']
+                    },
+                    'Senior (65+)': {
+                        'Tech': ['Easy-to-use tablet', 'Smartphone with large buttons', 'E-reader', 'Wireless headphones', 'Digital photo frame', 'Tech support subscription', 'Simple gadgets', 'Virtual assistant device', 'Smart speaker', 'Portable charger', 'Smartwatch', 'Wireless earbuds'],
+                        'Fashion': ['Comfortable clothing set', 'Personalized scarf', 'Classic watch', 'Cozy sweater', 'Leather gloves', 'Custom jewelry', 'Vintage accessories', 'Handmade clothing', 'Luxury robe', 'Designer sunglasses', 'Personalized mug', 'Custom T-shirt'],
+                        'Books': ['Large-print book set', 'Classic literature', 'Audiobook subscription', 'Book collection', 'Personalized bookmark', 'Book club membership', 'Niche genre books', 'Literary-themed art', 'Book-themed candle', 'Reading lamp'],
+                        'Outdoors': ['Gardening set', 'Birdwatching gear', 'Compost bin', 'Outdoor blanket', 'Portable chair', 'Gardening tools', 'Outdoor game set', 'Picnic set', 'Nature guidebook', 'Bird feeder', 'Binoculars'],
+                        'Food & Cooking': ['Easy recipe cookbook', 'Personalized apron', 'Gourmet tea/coffee set', 'Baking set', 'Specialty spices', 'Food subscription box', 'Cooking class voucher', 'Gourmet chocolate', 'Custom cutting board', 'Spice subscription'],
+                        'Fitness': ['Light resistance bands', 'Comfortable yoga mat', 'Walking shoes', 'Fitness tracker', 'Massage cushion', 'Yoga class pass', 'Personalized workout plan', 'Recovery gear', 'Fitness app subscription', 'Meditation cushion'],
+                        'Arts & Crafts': ['Painting set', 'Knitting kit', 'Scrapbooking supplies', 'DIY craft kit', 'Calligraphy set', 'Origami set', 'Sticker book', 'DIY candle-making kit', 'Custom puzzle', 'Scrapbooking supplies', 'Personalized sketchbook', 'Art supplies set'],
+                        'Travel': ['Comfortable travel pillow', 'Luggage set', 'Travel journal', 'Portable charger', 'Travel-themed decor', 'Travel experience voucher', 'Custom city guide', 'Travel-themed puzzle', 'Language phrasebook', 'Travel accessories set'],
+                        'Self-Care & Hygiene': ['Skincare set', 'Perfume/cologne set', 'Bath bomb set', 'Spa gift set', 'Luxury soap set', 'Haircare set', 'Manicure/pedicure set', 'Aromatherapy diffuser', 'Essential oil set', 'Self-care book']
+                    }
+                }
+            };
+
+            const defaultGifts = [
+                'Gift card',
+                'Personalized mug',
+                'Custom photo frame'
+            ];
+
+            try {
+                return recommendations[recipient][ageGroup][interest] || defaultGifts;
+            } catch (e) {
+                return defaultGifts;
+            }
+        }
+
+        function resetFlowchart() {
+            document.querySelectorAll('.question, .recommendations').forEach(el => {
+                el.classList.add('hidden');
+            });
+            document.getElementById('q1').classList.remove('hidden');
+            Object.keys(selections).forEach(key => delete selections[key]);
+        }
+
+        function goBack(currentQuestionId, previousQuestionId) {
+            document.getElementById(currentQuestionId).classList.add('hidden');
+            document.getElementById(previousQuestionId).classList.remove('hidden');
+            delete selections[currentQuestionId];
+        }
+
+        function goBackToLastQuestion() {
+            document.getElementById('recommendations').classList.add('hidden');
+            document.getElementById(lastQuestionId).classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
