@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gift-Pickr.com | Gift Ideas made easy</title>
+    <title>Gift-Pickr.com | Gift Ideas Made Simple</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -461,7 +461,7 @@
             </div>
             <div class="button-group">
                 <button class="btn btn-secondary" onclick="showAllGifts()">Show all gift suggestions</button>
-                <button class="btn btn-secondary" onclick="showTextSpace()">About Gift-Suggestions</button>
+                <button class="btn btn-secondary" onclick="showTextSpace()">About Gift-Pickr</button>
             </div>
         </div>
 
@@ -482,7 +482,7 @@
             <div class="options-grid">
                 <div class="option" onclick="selectOption('q3', 'Tech', 'recommendations')">💻 Tech</div>
                 <div class="option" onclick="selectOption('q3', 'Fashion', 'recommendations')">👗 Fashion</div>
-                <div class="option" onclick="selectOption('q3', 'Books', 'recommendations')">📚 Books</div>
+                <div class="option" onclick="selectOption('q3', 'Books', 'recommendations')">📚 Literature</div>
                 <div class="option" onclick="selectOption('q3', 'Outdoors', 'recommendations')">🌲 Outdoors</div>
                 <div class="option" onclick="selectOption('q3', 'Food & Cooking', 'recommendations')">🍳 Food & Cooking</div>
                 <div class="option" onclick="selectOption('q3', 'Fitness', 'recommendations')">💪 Fitness</div>
@@ -510,8 +510,13 @@
         <div class="text-space hidden" id="text-space">
             <h2>About Gift-Pickr</h2>
             <div class="text-content">
-                <p>Tiny Sideproject to make it easy to find simple gift ideas without any bias or AI involvement.
-<br>I will be updating the gift liss depending on time and what I feel like.</p>
+                <p>Gift-Pickr is a tiny side project of mine since I always wanted to publish a website. 
+                <br>The reason I chose this topic is beacause I feel like we, as society, need to constantly think of new gifts for various people in our lives which sometimes can be difficult.
+                <br>While we currently have AI as a tool to help us pick very tailored gifts, I am not a fan of using AI for anything creative or ideas like that. The final decision should always come from our human mind.
+                <br>This is why I believe that getting inspiration from a website like this is a good tool to help you decide on a gift you want to buy for anyone that needs one! To me, it is important that when chosing a gift,
+                    you should not be bombarded with any form of special sales, pushing various gifts at the top of the list. No Links, no hidden ads, just ideas gathered on the net.
+                <br>I am going to update the gift choices if I get time to scroll through more "gift ideas" posts on social media or any other articles that cover gifts.
+                <br></p>
             </div>
             <div class="button-group">
                 <button class="btn btn-back" onclick="showMainContent()">← Back to Gift Finder</button>
@@ -530,7 +535,7 @@
         const recommendations = {
             'Partner': {
                 'Teen (13–19)': {
-                    'Tech': ['Gaming headset', 'Console accessories', 'In-game currency', 'Portable speaker', 'Wireless earbuds', 'Smartphone accessories', 'VR headset', 'Custom phone case', 'Bluetooth keyboard', 'Gaming mouse', 'Smartwatch', 'Wireless charger', 'Streaming microphone', 'Gaming chair', 'Custom PC parts'],
+                    'Tech': ['Gaming headset', 'Console accessories', 'In-game currency', 'Portable speaker', 'Wireless earbuds', 'Smartphone accessories', 'VR headset', 'Custom phone case', 'Keyboard', 'Gaming mouse', 'Smartwatch', 'Wireless charger', 'Streaming microphone', 'Gaming chair', 'Custom PC parts'],
                     'Fashion': ['Trendy backpack', 'Custom jewelry', 'Streetwear', 'Designer sunglasses', 'Trendy watch', 'Personalized hoodie', 'Custom sneakers', 'Luxury scarf', 'Fashion subscription box', 'Designer wallet', 'Personalized mug', 'Custom T-shirt', 'Trendy outfit', 'Vintage jacket', 'Leather bracelet'],
                     'Books': ['Young adult book series', 'Personalized journal', 'Book-themed merch', 'Graphic novel set', 'Bookstore gift card', 'Fantasy series', 'Sci-fi novels', 'Historical fiction', 'First edition books', 'Signed copies', 'Bestseller novel', 'Book club subscription', 'Personalized book', 'Audiobook subscription', 'Reading lamp', 'Poetry collection', 'Mystery novels', 'Romance novels'],
                     'Outdoors': ['Camping gear for teens', 'Hiking backpack', 'Outdoor sports set', 'Portable hammock', 'Outdoor game set', 'Kids’ binoculars', 'Gardening set for kids', 'Kids’ tent', 'Outdoor exploration kit', 'Survival kit', 'Binoculars', 'Gardening tools', 'Outdoor blanket', 'Picnic set', 'Frisbee', 'Sports ball set'],
