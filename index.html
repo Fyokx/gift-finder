@@ -16,7 +16,7 @@
             --primary-dark: #8A42E5;
             --secondary: #00C2CB;
             --accent: #FF6B9D;
-            --dark: #222426;
+            --dark: #100069;
             --darker: #222426;
             --light: #1E1E1E;
             --light-gray: #2D2D2D;
@@ -34,7 +34,10 @@
 
         body {
             font-family: 'Nunito', sans-serif;
-            background-color: var(--darker);
+            background-image: url('konstantin-evdokimov-unsplash.jpg');
+			 background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
             color: var(--white);
             line-height: 1.6;
             min-height: 100vh;
@@ -51,9 +54,11 @@
 
         /* Header */
         header {
+		
             padding: 32px 0;
             text-align: center;
-            border-bottom: 1px solid var(--light-gray);
+            
+			
         }
 
         .logo {
@@ -391,7 +396,6 @@
             text-align: center;
             color: #A0A0A0;
             font-size: 0.85rem;
-            border-top: 1px solid var(--light-gray);
             letter-spacing: 0.5px;
         }
 
